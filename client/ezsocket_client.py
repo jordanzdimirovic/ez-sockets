@@ -1,14 +1,16 @@
 """
+EZ Socket Client for Python
 
+Jordan Zdimirovic - https://github.com/jordstar20001/ez-sockets.git
 """
 
 import socket, json, threading
 
 from typing import Dict, Callable
 
-DEBUG = True
+DEBUG = False # TRUE to enable debug console messages
 
-#region Helpers
+#region Helper Functions
 def get_event_and_content(data):
     event_end = data.find("\n")
     event, content = data[:event_end], data[event_end + 1:].strip()
@@ -18,7 +20,18 @@ def get_event_and_content(data):
 #endregion
 
 class EZSClient():
+    """
+    EZ-Socket Client Class.
+    Handles incoming socket connections, events and sending / receiving.
+
+    First, create an instance.
+    Then, call the connect method. Provide the server address / port, as well as an optional disconnect callback
+    """
     def __T_get_incoming(self):
+        """
+        Thread that handles incoming messages from the server.
+        Handles disconnects.
+        """
         while self.listening:
             try:
                 data = self.TCPSOCKET.recv(self.msg_size)
@@ -47,11 +60,19 @@ class EZSClient():
         self.disconnect_callback = None
 
     def shutdown(self):
+        """
+        Stop the client.
+        This just means to stop listening, and call the disconnect callback (for now)
+        """
         self.listening = False
         if self.disconnect_callback: self.disconnect_callback()
         # Do anything else that is necessary
 
-    def connect(self, ip, port, msg_size = 1024, disconnect_callback = None):
+    def connect(self, ip: str, port: int, msg_size: int = 1024, disconnect_callback: Callable = None):
+        """
+        Connect to an EZSServer instance.
+        Calls the listen thread and connects the two sockets.
+        """
         self.listening = True
         self.msg_size = msg_size
         self.server_address = (ip, port)
@@ -61,26 +82,22 @@ class EZSClient():
         t.start()
 
     def on(self, event: str, callback: Callable):
+        """
+        Register an event with a callback.
+        """
         self.event_registry[event] = callback
     
-    def __handle_event(self, event: str, data: Dict):
-        assert event in self.event_registry, f"Event {event} not found."
-        self.event_registry[event](data)
+    def __handle_event(self, event: str, data: Dict = None):
+        """
+        Handle the event with the data given.
+        """
+        if event in event_registry:
+            self.event_registry[event](data)
 
     def send(self, key: str, data: Dict = None):
+        """
+        Send a message to the server.
+        """
         packet = key + '\n'
         packet += json.dumps(data)
         self.TCPSOCKET.send(packet.encode())
-
-if __name__ == "__main__":
-    def count_keys(data):
-        for i, k in enumerate(data):
-            print(f"{i} - {k}")
-        print(f"There were {i+1} values.")
-    
-    c = EZSClient()
-    c.on("test", count_keys)
-    c.connect("localhost", 8080)
-    input()
-    c.send("smile", {"name": "Jordan"})
-    input()
