@@ -6,3 +6,5 @@ event name
 {
     "key": "value"
 }
+
+NOTE THE \n REMAINS THERE EVEN IF NO DATA
