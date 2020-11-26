@@ -1,0 +1,8 @@
+All socket event data should be formatted like this (without START and END):
+
+START
+event name
+\n
+{
+    "key": "value"
+}
