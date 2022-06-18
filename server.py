@@ -1,7 +1,7 @@
 """
 EZ Socket Server for Python
 
-Jordan Zdimirovic - https://github.com/jordstar20001/ez-sockets.git
+Jordan Zdimirovic - https://github.com/jordanzdimirovic/ezsockets
 """
 
 import time, sys, os, json, threading, socket, binascii, timeit
